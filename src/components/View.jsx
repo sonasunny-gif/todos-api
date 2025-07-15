@@ -1,57 +1,67 @@
-import React, { useEffect, useState } from 'react'
-import Navigation from './Navigation'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import Navigation from './Navigation';
+import axios from 'axios';
+
+const View = () => {
+
+const[isload,changeload]=useState(true)
 
 
-const View= () => {
-        const [data, setdata] = useState(
-        {"todos":[]}
- 
-    )
-const fetchdata = ()=>{
-    axios.get('https://dummyjson.com/todos').then((response)=>{
-        setdata(response.data)
-    }).catch()
-    
-}
-useEffect(()=>{fetchdata()},[])
-    
+    const [data, setData] = useState({ todos: [] });
+
+    const fetchData = () => {
+        axios
+            .get('https://dummyjson.com/todos')
+            .then((response) => {
+                changeload(false)
+                setData(response.data);
+            })
+            .catch((error) => {
+                alert('Error fetching data:', error);
+            });
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div>
-          <Navigation/>
-            <div className="container-fluid py-4" style={{ backgroundColor: '#193843ff', Height: '100px' }}>
+            <Navigation />
+            <div className="container-fluid py-4" style={{ backgroundColor: '#193843ff', minHeight: '100vh' }}>
                 <div className="row">
-                    <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                        <div className="row g-3">
-                             <h1 className="text-center" style={{ color: '#faf9ffff' }}>
-                 TODOS DETAILS
-              </h1>
-                            {data.todos.map(
-                                (value, index) => {
-                                    return (
-                                        <div className="col col-12 col-sm-4 col-md-4 col-lg-4 col-xl-4 col-xxl-4">
-                                            <div class="card h-100 w-70">
-                                                
-                                                 
-                                                <div class="card-body d-flex flex-column">
-                                                    <h5 class="card-title">Title = {value.id}</h5>
-                                                     <h5 class="card-title">ID = {value.todo}</h5>
-                                                      <h5 class="card-title">UserId ={value.userId}</h5>
-                                                         <h5 class="card-title">Status ={value.completed}</h5>
-                                                    
-                                                   
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-                            )}
-                        </div></div></div>
+                    <div className="col-12">
+                        <h1 className="text-center text-white mb-4">TODOS DETAILS</h1>
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-striped table-hover bg-white">
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th scope="col">Id</th>
+                                        <th scope="col">Todo</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                {isload ?<div class="d-flex align-items-center">
+  <strong role="status">Loading...</strong>
+  <div class="spinner-border ms-auto" aria-hidden="true"></div>
+</div> : <tbody>
+                                    {data.todos.map((value, index) => (
+                                        <tr key={index}>
+                                            <td>{value.id}</td>
+                                            <td>{value.todo}</td>
+                                            <td>{value.completed ? <p className='text-success'>completed</p> : <p className='text-danger'>not completed</p>}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>}
+
+                                
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    )
-}
-export default View
+    );
+};
 
-
-
+export default View;
